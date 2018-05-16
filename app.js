@@ -1,26 +1,36 @@
 var createError = require('http-errors');
 var express = require('express');
+//var bodyParser = require('body-parser');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const cors = require('cors');
+
+// I dont know why I need this code
+//var logger = require('morgan');
+
+// Add here routes that you need
+var loginRouter = require('./routes/login');
+var registerRouter = require('./routes/register');
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+var mongoose = require("mongoose");
+mongoose.Promise = Promise;
 
-app.use(logger('dev'));
+mongoose.connect('mongodb://localhost:27017/fotobattle').then((success) => 
+	console.log('Mongoose up'));
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use(cors());
+app.options('*', cors());
+
+app.use('', loginRouter);
+app.use('', registerRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
